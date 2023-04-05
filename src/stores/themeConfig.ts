@@ -102,9 +102,9 @@ export const useThemeConfig = defineStore('themeConfig', {
 			// 是否开启色弱模式
 			isInvert: false,
 			// 是否开启水印
-			isWartermark: true,
+			isWartermark: false,
 			// 水印文案
-			wartermarkText: 'vue-next-admin',
+			wartermarkText: '',
 
 			/**
 			 * 其它设置
@@ -121,7 +121,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 
 			/**
 			 * 布局切换
-			 * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：/@/layout/navBars/breadcrumb/setings.vue
+			 * 注意：为了演示，切换布局时，颜色会被还原成默认，代码位置：@/layout/navBars/breadcrumb/setings.vue
 			 * 中的 `initSetLayoutChange(设置布局切换，重置主题样式)` 方法
 			 */
 			// 布局切换：可选值"<defaults|classic|transverse|columns>"，默认 defaults
@@ -131,7 +131,7 @@ export const useThemeConfig = defineStore('themeConfig', {
 			 * 后端控制路由
 			 */
 			// 是否开启后端控制路由
-			isRequestRoutes: false,
+			isRequestRoutes: true,
 
 			/**
 			 * 全局网站标题 / 副标题

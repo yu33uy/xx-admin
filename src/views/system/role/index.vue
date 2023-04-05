@@ -3,7 +3,7 @@
 		<div class="system-role-padding layout-padding-auto layout-padding-view">
 			<div class="system-user-search mb15">
 				<el-input v-model="state.tableData.param.search" size="default" placeholder="请输入角色名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
+				<el-button size="default" type="primary" class="ml10" @click="onSearch">
 					<el-icon>
 						<ele-Search />
 					</el-icon>
@@ -19,22 +19,22 @@
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
 				<el-table-column type="index" label="序号" width="60" />
 				<el-table-column prop="roleName" label="角色名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="角色标识" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="roleCode" label="角色标识" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="sort" label="排序" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="status" label="角色状态" show-overflow-tooltip>
+				<el-table-column prop="enabled" label="角色状态" show-overflow-tooltip>
 					<template #default="scope">
-						<el-tag type="success" v-if="scope.row.status">启用</el-tag>
+						<el-tag type="success" v-if="scope.row.enabled">启用</el-tag>
 						<el-tag type="info" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="describe" label="角色描述" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="description" label="角色描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button :disabled="scope.row.roleName === '超级管理员'" size="small" text type="primary" @click="onOpenEditRole('edit', scope.row)"
+						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onOpenEditRole('edit', scope.row)"
 							>修改</el-button
 						>
-						<el-button :disabled="scope.row.roleName === '超级管理员'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -44,7 +44,7 @@
 				class="mt15"
 				:pager-count="5"
 				:page-sizes="[10, 20, 30]"
-				v-model:current-page="state.tableData.param.pageNum"
+				v-model:current-page="state.tableData.param.pageNo"
 				background
 				v-model:page-size="state.tableData.param.pageSize"
 				layout="total, sizes, prev, pager, next, jumper"
@@ -59,9 +59,11 @@
 <script setup lang="ts" name="systemRole">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
+import {useRoleApi} from "@/api/system/role";
 
+const roleApi = useRoleApi()
 // 引入组件
-const RoleDialog = defineAsyncComponent(() => import('/@/views/system/role/dialog.vue'));
+const RoleDialog = defineAsyncComponent(() => import('@/views/system/role/dialog.vue'));
 
 // 定义变量内容
 const roleDialogRef = ref();
@@ -72,31 +74,24 @@ const state = reactive<SysRoleState>({
 		loading: false,
 		param: {
 			search: '',
-			pageNum: 1,
+			pageNo: 1,
 			pageSize: 10,
 		},
 	},
 });
 // 初始化表格数据
-const getTableData = () => {
+const getTableData = async () => {
 	state.tableData.loading = true;
-	const data = [];
-	for (let i = 0; i < 20; i++) {
-		data.push({
-			roleName: i === 0 ? '超级管理员' : '普通用户',
-			roleSign: i === 0 ? 'admin' : 'common',
-			describe: `测试角色${i + 1}`,
-			sort: i,
-			status: true,
-			createTime: new Date().toLocaleString(),
-		});
-	}
-	state.tableData.data = data;
-	state.tableData.total = state.tableData.data.length;
-	setTimeout(() => {
+	const { records, total} = await roleApi.findPage(state.tableData.param).finally(() => {
 		state.tableData.loading = false;
-	}, 500);
+	});
+	state.tableData.data = records;
+	state.tableData.total =total;
 };
+const onSearch = () => {
+	state.tableData.param.pageNo = 1
+	getTableData()
+}
 // 打开新增角色弹窗
 const onOpenAddRole = (type: string) => {
 	roleDialogRef.value.openDialog(type);
@@ -125,7 +120,7 @@ const onHandleSizeChange = (val: number) => {
 };
 // 分页改变
 const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val;
+	state.tableData.param.pageNo = val;
 	getTableData();
 };
 // 页面加载时

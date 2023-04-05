@@ -2,8 +2,8 @@
 	<div class="system-menu-container layout-pd">
 		<el-card shadow="hover">
 			<div class="system-menu-search mb15">
-				<el-input size="default" placeholder="请输入菜单名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
+				<el-input size="default" v-model="state.tableData.param.search" placeholder="请输入菜单名称" style="max-width: 180px"> </el-input>
+				<el-button size="default" type="primary" class="ml10" @click="doSearch">
 					<el-icon>
 						<ele-Search />
 					</el-icon>
@@ -25,8 +25,8 @@
 			>
 				<el-table-column label="菜单名称" show-overflow-tooltip>
 					<template #default="scope">
-						<SvgIcon :name="scope.row.meta.icon" />
-						<span class="ml10">{{ $t(scope.row.meta.title) }}</span>
+						<SvgIcon :name="scope.row.icon" />
+						<span class="ml10">{{ $t(scope.row.title) }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column prop="path" label="路由路径" show-overflow-tooltip></el-table-column>
@@ -37,12 +37,12 @@
 				</el-table-column>
 				<el-table-column label="权限标识" show-overflow-tooltip>
 					<template #default="scope">
-						<span>{{ scope.row.meta.roles }}</span>
+						<span>{{ scope.row.roles }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="排序" show-overflow-tooltip width="80">
 					<template #default="scope">
-						{{ scope.$index }}
+						{{ scope.row.sort }}
 					</template>
 				</el-table-column>
 				<el-table-column label="类型" show-overflow-tooltip width="80">
@@ -67,31 +67,37 @@
 import { defineAsyncComponent, ref, onMounted, reactive } from 'vue';
 import { RouteRecordRaw } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { storeToRefs } from 'pinia';
-import { useRoutesList } from '/@/stores/routesList';
-// import { setBackEndControlRefreshRoutes } from "/@/router/backEnd";
+import {useMenuApi} from "@/api/system/menu";
+// import { setBackEndControlRefreshRoutes } from "@/router/backEnd";
 
 // 引入组件
-const MenuDialog = defineAsyncComponent(() => import('/@/views/system/menu/dialog.vue'));
+const MenuDialog = defineAsyncComponent(() => import('@/views/system/menu/dialog.vue'));
+
+const menuApi = useMenuApi();
 
 // 定义变量内容
-const stores = useRoutesList();
-const { routesList } = storeToRefs(stores);
 const menuDialogRef = ref();
 const state = reactive({
 	tableData: {
-		data: [] as RouteRecordRaw[],
+		data: [] ,
 		loading: true,
+		param: {
+			search: '',
+		}
 	},
 });
 
 // 获取路由数据，真实请从接口获取
-const getTableData = () => {
+const getTableData = async () => {
 	state.tableData.loading = true;
-	state.tableData.data = routesList.value;
-	setTimeout(() => {
+	const data = await menuApi.getMenuTree(state.tableData.param).finally(() => {
 		state.tableData.loading = false;
-	}, 500);
+	});
+	state.tableData.data = data;
+};
+
+const doSearch = () => {
+	getTableData();
 };
 // 打开新增菜单弹窗
 const onOpenAddMenu = (type: string) => {

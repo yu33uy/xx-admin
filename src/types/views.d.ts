@@ -59,9 +59,10 @@ declare type ParamsState = {
  */
 // role
 declare interface RowRoleType {
+	roleId: string;
 	roleName: string;
-	roleSign: string;
-	describe: string;
+	roleCode: string;
+	description: string;
 	sort: number;
 	status: boolean;
 	createTime: string;
@@ -93,7 +94,7 @@ declare type RowUserType<T = any> = {
 	password: string;
 	overdueTime: T;
 	status: boolean;
-	describe: string;
+	description: string;
 	createTime: T;
 };
 
@@ -110,7 +111,7 @@ declare type DeptTreeType = {
 	createTime: string;
 	status: boolean;
 	sort: number;
-	describe: string;
+	description: string;
 	id: number | string;
 	children?: DeptTreeType[];
 };
@@ -141,7 +142,7 @@ type ListType = {
 declare interface RowDicType {
 	dicName: string;
 	fieldName: string;
-	describe: string;
+	description: string;
 	status: boolean;
 	createTime: string;
 	list: ListType[];

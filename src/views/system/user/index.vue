@@ -3,7 +3,7 @@
 		<el-card shadow="hover" class="layout-padding-auto">
 			<div class="system-user-search mb15">
 				<el-input size="default" placeholder="请输入用户名称" style="max-width: 180px"> </el-input>
-				<el-button size="default" type="primary" class="ml10">
+				<el-button size="default" type="primary" class="ml10" @click="onSearch">
 					<el-icon>
 						<ele-Search />
 					</el-icon>
@@ -18,11 +18,17 @@
 			</div>
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
 				<el-table-column type="index" label="序号" width="60" />
-				<el-table-column prop="userName" label="账户名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="userNickname" label="用户昵称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="roleSign" label="关联角色" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="department" label="部门" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="phone" label="手机号" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="username" label="账户名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="nickName" label="用户昵称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="roleList" label="关联角色" show-overflow-tooltip>
+					<template #default="scope">
+						<el-tag v-for="item in scope.row.roleList" :key="item.roleId" type="success" size="small">
+							{{ item.roleName }}
+						</el-tag>
+					</template>
+				</el-table-column>
+				<el-table-column prop="deptName" label="部门" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="mobile" label="手机号" ></el-table-column>
 				<el-table-column prop="email" label="邮箱" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="status" label="用户状态" show-overflow-tooltip>
 					<template #default="scope">
@@ -30,14 +36,14 @@
 						<el-tag type="info" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="describe" label="用户描述" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="description" label="用户描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary" @click="onOpenEditUser('edit', scope.row)"
+						<el-button :disabled="scope.row.userId === '1'" size="small" text type="primary" @click="onOpenEditUser('edit', scope.row)"
 							>修改</el-button
 						>
-						<el-button :disabled="scope.row.userName === 'admin'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button :disabled="scope.row.userId === '1'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -47,7 +53,7 @@
 				class="mt15"
 				:pager-count="5"
 				:page-sizes="[10, 20, 30]"
-				v-model:current-page="state.tableData.param.pageNum"
+				v-model:current-page="state.tableData.param.pageNo"
 				background
 				v-model:page-size="state.tableData.param.pageSize"
 				layout="total, sizes, prev, pager, next, jumper"
@@ -60,11 +66,14 @@
 </template>
 
 <script setup lang="ts" name="systemUser">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
+import {defineAsyncComponent, onMounted, reactive, ref} from 'vue';
+import {ElMessage, ElMessageBox} from 'element-plus';
+import {useUserApi} from "@/api/system/user";
 
 // 引入组件
-const UserDialog = defineAsyncComponent(() => import('/@/views/system/user/dialog.vue'));
+const UserDialog = defineAsyncComponent(() => import('@/views/system/user/dialog.vue'));
+
+const userApi = useUserApi();
 
 // 定义变量内容
 const userDialogRef = ref();
@@ -74,38 +83,27 @@ const state = reactive<SysUserState>({
 		total: 0,
 		loading: false,
 		param: {
-			pageNum: 1,
+			pageNo: 1,
 			pageSize: 10,
 		},
 	},
 });
 
 // 初始化表格数据
-const getTableData = () => {
+const getTableData = async () => {
 	state.tableData.loading = true;
-	const data = [];
-	for (let i = 0; i < 2; i++) {
-		data.push({
-			userName: i === 0 ? 'admin' : 'test',
-			userNickname: i === 0 ? '我是管理员' : '我是普通用户',
-			roleSign: i === 0 ? 'admin' : 'common',
-			department: i === 0 ? ['vueNextAdmin', 'IT外包服务'] : ['vueNextAdmin', '资本控股'],
-			phone: '12345678910',
-			email: 'vueNextAdmin@123.com',
-			sex: '女',
-			password: '123456',
-			overdueTime: new Date(),
-			status: true,
-			describe: i === 0 ? '不可删除' : '测试用户',
-			createTime: new Date().toLocaleString(),
-		});
-	}
-	state.tableData.data = data;
-	state.tableData.total = state.tableData.data.length;
-	setTimeout(() => {
+	const {records, total} = await userApi.findPage(state.tableData.param).finally(() => {
 		state.tableData.loading = false;
-	}, 500);
+	});
+	state.tableData.data = records;
+	state.tableData.total = total;
 };
+
+const onSearch = () => {
+	state.tableData.param.pageNo = 1;
+	getTableData();
+};
+
 // 打开新增用户弹窗
 const onOpenAddUser = (type: string) => {
 	userDialogRef.value.openDialog(type);
@@ -134,7 +132,7 @@ const onHandleSizeChange = (val: number) => {
 };
 // 分页改变
 const onHandleCurrentChange = (val: number) => {
-	state.tableData.param.pageNum = val;
+	state.tableData.param.pageNo = val;
 	getTableData();
 };
 // 页面加载时

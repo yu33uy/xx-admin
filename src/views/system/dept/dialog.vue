@@ -52,7 +52,7 @@
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="部门描述">
-							<el-input v-model="state.ruleForm.describe" type="textarea" placeholder="请输入部门描述" maxlength="150"></el-input>
+							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入部门描述" maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -84,7 +84,7 @@ const state = reactive({
 		email: '', // 邮箱
 		sort: 0, // 排序
 		status: true, // 部门状态
-		describe: '', // 部门描述
+		description: '', // 部门描述
 	},
 	deptData: [] as DeptTreeType[], // 部门数据
 	dialog: {
@@ -137,7 +137,7 @@ const getMenuData = () => {
 		createTime: new Date().toLocaleString(),
 		status: true,
 		sort: Math.random(),
-		describe: '顶级部门',
+		description: '顶级部门',
 		id: Math.random(),
 		children: [
 			{
@@ -145,7 +145,7 @@ const getMenuData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '总部',
+				description: '总部',
 				id: Math.random(),
 			},
 			{
@@ -153,7 +153,7 @@ const getMenuData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '分部',
+				description: '分部',
 				id: Math.random(),
 			},
 		],

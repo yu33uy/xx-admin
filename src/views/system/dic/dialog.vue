@@ -48,7 +48,7 @@
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="字典描述">
-							<el-input v-model="state.ruleForm.describe" type="textarea" placeholder="请输入字典描述" maxlength="150"></el-input>
+							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入字典描述" maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -77,7 +77,7 @@ const state = reactive({
 		fieldName: '', // 字段名
 		status: true, // 字典状态
 		list: [] as ListType[], // 子集字段 + 属性值
-		describe: '', // 字典描述
+		description: '', // 字典描述
 	},
 	dialog: {
 		isShowDialog: false,

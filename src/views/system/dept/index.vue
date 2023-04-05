@@ -36,7 +36,7 @@
 						<el-tag type="info" v-else>禁用</el-tag>
 					</template>
 				</el-table-column>
-				<el-table-column prop="describe" label="部门描述" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="description" label="部门描述" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" show-overflow-tooltip width="140">
 					<template #default="scope">
@@ -56,7 +56,7 @@ import { defineAsyncComponent, ref, reactive, onMounted } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
 
 // 引入组件
-const DeptDialog = defineAsyncComponent(() => import('/@/views/system/dept/dialog.vue'));
+const DeptDialog = defineAsyncComponent(() => import('@/views/system/dept/dialog.vue'));
 
 // 定义变量内容
 const deptDialogRef = ref();
@@ -66,7 +66,7 @@ const state = reactive<SysDeptState>({
 		total: 0,
 		loading: false,
 		param: {
-			pageNum: 1,
+			pageNo: 1,
 			pageSize: 10,
 		},
 	},
@@ -81,7 +81,7 @@ const getTableData = () => {
 		createTime: new Date().toLocaleString(),
 		status: true,
 		sort: Math.random(),
-		describe: '顶级部门',
+		description: '顶级部门',
 		id: Math.random(),
 		children: [
 			{
@@ -89,7 +89,7 @@ const getTableData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '总部',
+				description: '总部',
 				id: Math.random(),
 			},
 			{
@@ -97,7 +97,7 @@ const getTableData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '分部',
+				description: '分部',
 				id: Math.random(),
 			},
 		],

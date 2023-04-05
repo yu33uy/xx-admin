@@ -106,8 +106,8 @@ import { ElMessage } from 'element-plus';
 import table2excel from 'js-table2excel';
 import Sortable from 'sortablejs';
 import { storeToRefs } from 'pinia';
-import { useThemeConfig } from '/@/stores/themeConfig';
-import '/@/theme/tableTool.scss';
+import { useThemeConfig } from '@/stores/themeConfig';
+import '@/theme/tableTool.scss';
 
 // 定义父组件传过来的值
 const props = defineProps({
@@ -137,7 +137,7 @@ const storesThemeConfig = useThemeConfig();
 const { themeConfig } = storeToRefs(storesThemeConfig);
 const state = reactive({
 	page: {
-		pageNum: 1,
+		pageNo: 1,
 		pageSize: 10,
 	},
 	selectlist: [] as EmptyObjectType[],

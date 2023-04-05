@@ -73,7 +73,7 @@
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="用户描述">
-							<el-input v-model="state.ruleForm.describe" type="textarea" placeholder="请输入用户描述" maxlength="150"></el-input>
+							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入用户描述" maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -108,7 +108,7 @@ const state = reactive({
 		password: '', // 账户密码
 		overdueTime: '', // 账户过期
 		status: true, // 用户状态
-		describe: '', // 用户描述
+		description: '', // 用户描述
 	},
 	deptData: [] as DeptTreeType[], // 部门数据
 	dialog: {
@@ -157,7 +157,7 @@ const getMenuData = () => {
 		createTime: new Date().toLocaleString(),
 		status: true,
 		sort: Math.random(),
-		describe: '顶级部门',
+		description: '顶级部门',
 		id: Math.random(),
 		children: [
 			{
@@ -165,7 +165,7 @@ const getMenuData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '总部',
+				description: '总部',
 				id: Math.random(),
 			},
 			{
@@ -173,7 +173,7 @@ const getMenuData = () => {
 				createTime: new Date().toLocaleString(),
 				status: true,
 				sort: Math.random(),
-				describe: '分部',
+				description: '分部',
 				id: Math.random(),
 			},
 		],

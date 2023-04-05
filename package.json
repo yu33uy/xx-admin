@@ -1,8 +1,8 @@
 {
-	"name": "vue-next-admin",
-	"version": "2.4.32",
-	"description": "vue3 vite next admin template",
-	"author": "lyt_20201208",
+	"name": "xx-admin",
+	"version": "1.0",
+	"description": "admin template",
+	"author": "w4o",
 	"license": "MIT",
 	"scripts": {
 		"dev": "vite --force",
@@ -64,7 +64,7 @@
 		"not dead"
 	],
 	"bugs": {
-		"url": "https://gitee.com/lyt-top/vue-next-admin/issues"
+		"url": "https://github.com/w4o/xx-admin/issues"
 	},
 	"engines": {
 		"node": ">=16.0.0",
@@ -75,12 +75,10 @@
 		"vue3",
 		"vuejs/vue-next",
 		"element-ui",
-		"element-plus",
-		"vue-next-admin",
-		"next-admin"
+		"element-plus"
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://gitee.com/lyt-top/vue-next-admin.git"
+		"url": "https://github.com/w4o/xx-admin.git"
 	}
 }
