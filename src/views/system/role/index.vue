@@ -32,23 +32,23 @@
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
 						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onOpenEditRole('edit', scope.row)"
-							>修改</el-button
+						>修改</el-button
 						>
 						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 			<el-pagination
-				@size-change="onHandleSizeChange"
-				@current-change="onHandleCurrentChange"
-				class="mt15"
-				:pager-count="5"
-				:page-sizes="[10, 20, 30]"
-				v-model:current-page="state.tableData.param.pageNo"
-				background
-				v-model:page-size="state.tableData.param.pageSize"
-				layout="total, sizes, prev, pager, next, jumper"
-				:total="state.tableData.total"
+					@size-change="onHandleSizeChange"
+					@current-change="onHandleCurrentChange"
+					class="mt15"
+					:pager-count="5"
+					:page-sizes="[10, 20, 30]"
+					v-model:current-page="state.tableData.param.pageNo"
+					background
+					v-model:page-size="state.tableData.param.pageSize"
+					layout="total, sizes, prev, pager, next, jumper"
+					:total="state.tableData.total"
 			>
 			</el-pagination>
 		</div>
@@ -59,11 +59,11 @@
 <script setup lang="ts" name="systemRole">
 import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import {useRoleApi} from "@/api/system/role";
+import { useRoleApi } from '/@/api/system/role';
 
-const roleApi = useRoleApi()
+const roleApi = useRoleApi();
 // 引入组件
-const RoleDialog = defineAsyncComponent(() => import('@/views/system/role/dialog.vue'));
+const RoleDialog = defineAsyncComponent(() => import('/@/views/system/role/dialog.vue'));
 
 // 定义变量内容
 const roleDialogRef = ref();
@@ -82,16 +82,16 @@ const state = reactive<SysRoleState>({
 // 初始化表格数据
 const getTableData = async () => {
 	state.tableData.loading = true;
-	const { records, total} = await roleApi.findPage(state.tableData.param).finally(() => {
+	const { records, total } = await roleApi.findPage(state.tableData.param).finally(() => {
 		state.tableData.loading = false;
 	});
 	state.tableData.data = records;
-	state.tableData.total =total;
+	state.tableData.total = total;
 };
 const onSearch = () => {
-	state.tableData.param.pageNo = 1
-	getTableData()
-}
+	state.tableData.param.pageNo = 1;
+	getTableData();
+};
 // 打开新增角色弹窗
 const onOpenAddRole = (type: string) => {
 	roleDialogRef.value.openDialog(type);
@@ -107,11 +107,11 @@ const onRowDel = (row: RowRoleType) => {
 		cancelButtonText: '取消',
 		type: 'warning',
 	})
-		.then(() => {
-			getTableData();
-			ElMessage.success('删除成功');
-		})
-		.catch(() => {});
+			.then(() => {
+				getTableData();
+				ElMessage.success('删除成功');
+			})
+			.catch(() => {});
 };
 // 分页改变
 const onHandleSizeChange = (val: number) => {

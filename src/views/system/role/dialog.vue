@@ -1,41 +1,49 @@
 <template>
 	<div class="system-role-dialog-container">
 		<el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
-			<el-form ref="roleDialogFormRef" :model="state.ruleForm" size="default" label-width="90px" :rules="state.rules">
+			<el-form ref="roleDialogFormRef" :model="state.ruleForm" size="default" label-width="90px"
+							 :rules="state.rules">
 				<el-row :gutter="35">
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色名称" prop="roleName">
-							<el-input v-model="state.ruleForm.roleName" placeholder="请输入角色名称" clearable></el-input>
+							<el-input v-model="state.ruleForm.roleName" placeholder="请输入角色名称"
+												clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色标识" prop="roleCode">
 							<template #label>
-								<el-tooltip effect="dark" content="用于 `router/route.ts` meta.roles" placement="top-start">
+								<el-tooltip effect="dark" content="用于 `router/route.ts` meta.roles"
+														placement="top-start">
 									<span>角色标识</span>
 								</el-tooltip>
 							</template>
-							<el-input v-model="state.ruleForm.roleCode" placeholder="请输入角色标识" clearable></el-input>
+							<el-input v-model="state.ruleForm.roleCode" placeholder="请输入角色标识"
+												clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="排序" prop="sort">
-							<el-input-number v-model="state.ruleForm.sort" :min="0" :max="999" controls-position="right" placeholder="请输入排序" class="w100" />
+							<el-input-number v-model="state.ruleForm.sort" :min="0" :max="999" controls-position="right"
+															 placeholder="请输入排序" class="w100"/>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
 						<el-form-item label="角色状态">
-							<el-switch v-model="state.ruleForm.enabled" inline-prompt active-text="启" inactive-text="禁"></el-switch>
+							<el-switch v-model="state.ruleForm.enabled" inline-prompt active-text="启"
+												 inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="角色描述">
-							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入角色描述" maxlength="150"></el-input>
+							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入角色描述"
+												maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="菜单权限">
-							<el-tree :data="state.menuData" :props="state.menuProps" show-checkbox class="menu-data-tree" />
+							<el-tree :data="state.menuData" :props="state.menuProps" show-checkbox
+											 class="menu-data-tree"/>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -52,8 +60,8 @@
 
 <script setup lang="ts" name="systemRoleDialog">
 import {nextTick, reactive, ref} from 'vue';
-import { useMenuApi } from "@/api/system/menu";
-import { useRoleApi } from "@/api/system/role";
+import {useMenuApi} from '/@/api/system/menu';
+import {useRoleApi} from '/@/api/system/role';
 
 const menuApi = useMenuApi();
 const roleApi = useRoleApi();
@@ -72,7 +80,7 @@ const state = reactive({
 		enabled: true, // 角色状态
 		description: '', // 角色描述
 	},
-	menuData: [] as TreeType[],
+	menuData: [] as any,
 	menuProps: {
 		children: 'children',
 		label: 'label',
@@ -84,18 +92,21 @@ const state = reactive({
 		submitTxt: '',
 	},
 	rules: {
-		roleName: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-		roleCode: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
-		sort: [{ required: true, message: '请输入排序值', trigger: 'blur' }],
+		roleName: [{required: true, message: '请输入角色名称', trigger: 'blur'}],
+		roleCode: [{required: true, message: '请输入角色编码', trigger: 'blur'}],
+		sort: [{required: true, message: '请输入排序值', trigger: 'blur'}],
 	}
 });
 
 // 打开弹窗
-const openDialog = (type: string, row: RowRoleType) => {
+const openDialog = (type: string, row) => {
 	if (type === 'edit') {
-		state.ruleForm = row;
 		state.dialog.title = '修改角色';
 		state.dialog.submitTxt = '修 改';
+		nextTick(() => {
+			state.ruleForm = {...row};
+			roleDialogFormRef.value.clearValidate();
+		});
 	} else {
 		state.dialog.title = '新增角色';
 		state.dialog.submitTxt = '新 增';
