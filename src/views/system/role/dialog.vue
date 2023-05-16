@@ -29,19 +29,19 @@
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
-						<el-form-item label="角色状态">
+						<el-form-item label="角色状态" prop="enabled">
 							<el-switch v-model="state.ruleForm.enabled" inline-prompt active-text="启"
 												 inactive-text="禁"></el-switch>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="角色描述">
+						<el-form-item label="角色描述" prop="description">
 							<el-input v-model="state.ruleForm.description" type="textarea" placeholder="请输入角色描述"
 												maxlength="150"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
-						<el-form-item label="菜单权限">
+						<el-form-item label="菜单权限" prop="menus">
 							<el-tree :data="state.menuData" :props="state.menuProps"
 											 show-checkbox
 											 node-key="id"
@@ -75,18 +75,16 @@ const emit = defineEmits(['refresh']);
 // 定义变量内容
 const roleDialogFormRef = ref();
 const menuTreeRef = ref();
-
-const defaultFrom = ref({
-	roleId: '', // 角色id
-	roleName: '', // 角色名称
-	roleCode: '', // 角色标识
-	sort: 0, // 排序
-	enabled: true, // 角色状态
-	description: '', // 角色描述
-	menus: [] as any, // 菜单权限
-})
 const state = reactive({
-	ruleForm: {...defaultFrom.value},
+	ruleForm: {
+		roleId: '', // 角色id
+		roleName: '', // 角色名称
+		roleCode: '', // 角色标识
+		sort: 0, // 排序
+		enabled: true, // 角色状态
+		description: '', // 角色描述
+		menus: [] as any, // 菜单权限
+	},
 	menuData: [] as any,
 	menuProps: {
 		children: 'children',
@@ -113,19 +111,16 @@ const openDialog = (type: string, row) => {
 		nextTick(() => {
 			state.ruleForm = {...row};
 			menuTreeRef.value.setCheckedKeys(row.menus);
+			roleDialogFormRef.value.clearValidate();
 		});
 	} else {
 		state.dialog.title = '新增角色';
 		state.dialog.submitTxt = '新 增';
-		state.ruleForm = {...defaultFrom.value};
 		// 清空表单，此项需加表单验证才能使用
 		nextTick(() => {
 			roleDialogFormRef.value.resetFields();
 		});
 	}
-	nextTick(() => {
-		roleDialogFormRef.value.clearValidate();
-	});
 	state.dialog.type = type;
 	state.dialog.isShowDialog = true;
 	getMenuData();
