@@ -1,4 +1,4 @@
-import request from '@/utils/request';
+import request from '/@/utils/request';
 
 
 export function useRoleApi() {
@@ -22,6 +22,12 @@ export function useRoleApi() {
                 url: `/sys/role/${id}`,
                 method: 'put',
                 data
+            })
+        },
+        delete: (id: string) => {
+            return request({
+                url: `/sys/role/${id}`,
+                method: 'delete'
             })
         }
     }

@@ -2,22 +2,23 @@
 	<div class="system-role-container layout-padding">
 		<div class="system-role-padding layout-padding-auto layout-padding-view">
 			<div class="system-user-search mb15">
-				<el-input v-model="state.tableData.param.search" size="default" placeholder="请输入角色名称" style="max-width: 180px"> </el-input>
+				<el-input v-model="state.tableData.param.search" size="default" placeholder="请输入角色名称"
+									style="max-width: 180px"></el-input>
 				<el-button size="default" type="primary" class="ml10" @click="onSearch">
 					<el-icon>
-						<ele-Search />
+						<ele-Search/>
 					</el-icon>
 					查询
 				</el-button>
 				<el-button size="default" type="success" class="ml10" @click="onOpenAddRole('add')">
 					<el-icon>
-						<ele-FolderAdd />
+						<ele-FolderAdd/>
 					</el-icon>
 					新增角色
 				</el-button>
 			</div>
 			<el-table :data="state.tableData.data" v-loading="state.tableData.loading" style="width: 100%">
-				<el-table-column type="index" label="序号" width="60" />
+				<el-table-column type="index" label="序号" width="60"/>
 				<el-table-column prop="roleName" label="角色名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="roleCode" label="角色标识" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="sort" label="排序" show-overflow-tooltip></el-table-column>
@@ -31,10 +32,14 @@
 				<el-table-column prop="createTime" label="创建时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" width="100">
 					<template #default="scope">
-						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onOpenEditRole('edit', scope.row)"
-						>修改</el-button
+						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary"
+											 @click="onOpenEditRole('edit', scope.row)"
+						>修改
+						</el-button
 						>
-						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary" @click="onRowDel(scope.row)">删除</el-button>
+						<el-button :disabled="scope.row.roleId === '1'" size="small" text type="primary"
+											 @click="onRowDel(scope.row)">删除
+						</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -52,14 +57,14 @@
 			>
 			</el-pagination>
 		</div>
-		<RoleDialog ref="roleDialogRef" @refresh="getTableData()" />
+		<RoleDialog ref="roleDialogRef" @refresh="getTableData()"/>
 	</div>
 </template>
 
 <script setup lang="ts" name="systemRole">
-import { defineAsyncComponent, reactive, onMounted, ref } from 'vue';
-import { ElMessageBox, ElMessage } from 'element-plus';
-import { useRoleApi } from '/@/api/system/role';
+import {defineAsyncComponent, reactive, onMounted, ref} from 'vue';
+import {ElMessageBox, ElMessage} from 'element-plus';
+import {useRoleApi} from '/@/api/system/role';
 
 const roleApi = useRoleApi();
 // 引入组件
@@ -82,7 +87,7 @@ const state = reactive<SysRoleState>({
 // 初始化表格数据
 const getTableData = async () => {
 	state.tableData.loading = true;
-	const { records, total } = await roleApi.findPage(state.tableData.param).finally(() => {
+	const {records, total} = await roleApi.findPage(state.tableData.param).finally(() => {
 		state.tableData.loading = false;
 	});
 	state.tableData.data = records;
@@ -107,11 +112,13 @@ const onRowDel = (row: RowRoleType) => {
 		cancelButtonText: '取消',
 		type: 'warning',
 	})
-			.then(() => {
-				getTableData();
+			.then(async () => {
+				await roleApi.delete(row.roleId);
+				await getTableData();
 				ElMessage.success('删除成功');
 			})
-			.catch(() => {});
+			.catch(() => {
+			});
 };
 // 分页改变
 const onHandleSizeChange = (val: number) => {
@@ -133,6 +140,7 @@ onMounted(() => {
 .system-role-container {
 	.system-role-padding {
 		padding: 15px;
+
 		.el-table {
 			flex: 1;
 		}

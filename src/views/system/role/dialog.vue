@@ -19,7 +19,7 @@
 								</el-tooltip>
 							</template>
 							<el-input v-model="state.ruleForm.roleCode" placeholder="请输入角色标识"
-												clearable></el-input>
+												clearable :disabled="state.dialog.type === 'edit'"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
@@ -42,7 +42,10 @@
 					</el-col>
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
 						<el-form-item label="菜单权限">
-							<el-tree :data="state.menuData" :props="state.menuProps" show-checkbox
+							<el-tree :data="state.menuData" :props="state.menuProps"
+											 show-checkbox
+											 node-key="id"
+											 ref="menuTreeRef"
 											 class="menu-data-tree"/>
 						</el-form-item>
 					</el-col>
@@ -71,15 +74,19 @@ const emit = defineEmits(['refresh']);
 
 // 定义变量内容
 const roleDialogFormRef = ref();
+const menuTreeRef = ref();
+
+const defaultFrom = ref({
+	roleId: '', // 角色id
+	roleName: '', // 角色名称
+	roleCode: '', // 角色标识
+	sort: 0, // 排序
+	enabled: true, // 角色状态
+	description: '', // 角色描述
+	menus: [] as any, // 菜单权限
+})
 const state = reactive({
-	ruleForm: {
-		roleId: '', // 角色id
-		roleName: '', // 角色名称
-		roleCode: '', // 角色标识
-		sort: 0, // 排序
-		enabled: true, // 角色状态
-		description: '', // 角色描述
-	},
+	ruleForm: {...defaultFrom.value},
 	menuData: [] as any,
 	menuProps: {
 		children: 'children',
@@ -105,16 +112,20 @@ const openDialog = (type: string, row) => {
 		state.dialog.submitTxt = '修 改';
 		nextTick(() => {
 			state.ruleForm = {...row};
-			roleDialogFormRef.value.clearValidate();
+			menuTreeRef.value.setCheckedKeys(row.menus);
 		});
 	} else {
 		state.dialog.title = '新增角色';
 		state.dialog.submitTxt = '新 增';
+		state.ruleForm = {...defaultFrom.value};
 		// 清空表单，此项需加表单验证才能使用
 		nextTick(() => {
 			roleDialogFormRef.value.resetFields();
 		});
 	}
+	nextTick(() => {
+		roleDialogFormRef.value.clearValidate();
+	});
 	state.dialog.type = type;
 	state.dialog.isShowDialog = true;
 	getMenuData();
@@ -128,17 +139,21 @@ const onCancel = () => {
 	closeDialog();
 };
 // 提交
-const onSubmit = async () => {
-	if (state.dialog.type === 'add') {
-		// 新增
-		await roleApi.add(state.ruleForm)
-	} else {
-		// 修改
-		await roleApi.update(state.ruleForm.roleId, state.ruleForm)
-	}
-	closeDialog();
-	emit('refresh');
+const onSubmit = () => {
+	roleDialogFormRef.value.validate(async (valid) => {
+		if (!valid) return;
 
+		state.ruleForm.menus = await menuTreeRef.value.getCheckedKeys(true);
+		if (state.dialog.type === 'add') {
+			// 新增
+			await roleApi.add(state.ruleForm)
+		} else {
+			// 修改
+			await roleApi.update(state.ruleForm.roleId, state.ruleForm)
+		}
+		closeDialog();
+		emit('refresh');
+	});
 };
 // 获取菜单结构数据
 const getMenuData = () => {
