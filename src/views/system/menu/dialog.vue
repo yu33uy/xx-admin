@@ -6,12 +6,12 @@
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
                         <el-form-item label="上级菜单" prop="parentId">
                             <el-cascader
-                                    :options="state.menuData"
-                                    :props="{ checkStrictly: true, emitPath:false, value: 'id', label: 'title' }"
-                                    placeholder="请选择上级菜单"
-                                    clearable
-                                    class="w100"
-                                    v-model="state.ruleForm.parentId"
+                                :options="state.menuData"
+                                :props="{ checkStrictly: true, emitPath:false, value: 'id', label: 'title' }"
+                                placeholder="请选择上级菜单"
+                                clearable
+                                class="w100"
+                                v-model="state.ruleForm.parentId"
                             >
                                 <template #default="{ node, data }">
                                     <span>{{ data.title }}</span>
@@ -67,10 +67,10 @@
                         <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" class="mb20">
                             <el-form-item label="链接地址" prop="link">
                                 <el-input
-                                        v-model="state.ruleForm.link"
-                                        placeholder="外链/内嵌时链接地址（http:xxx.com）"
-                                        clearable
-                                        :disabled="!state.ruleForm.isLink"
+                                    v-model="state.ruleForm.link"
+                                    placeholder="外链/内嵌时链接地址（http:xxx.com）"
+                                    clearable
+                                    :disabled="!state.ruleForm.isLink"
                                 >
                                 </el-input>
                             </el-form-item>
@@ -219,9 +219,12 @@ const openDialog = (type: string, row?: any) => {
         // 模拟数据，实际请走接口
         row.menuType = 'menu';
         row.menuSort = Math.floor(Math.random() * 100);
-        state.ruleForm = JSON.parse(JSON.stringify(row));
         state.dialog.title = '修改菜单';
         state.dialog.submitTxt = '修 改';
+        nextTick(() => {
+            state.ruleForm = {...row};
+            menuDialogFormRef.value.clearValidate();
+        });
     } else {
         state.dialog.title = '新增菜单';
         state.dialog.submitTxt = '新 增';
