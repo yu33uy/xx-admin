@@ -18,11 +18,11 @@
                 </el-button>
             </div>
             <el-table
-                    :data="state.tableData.data"
-                    v-loading="state.tableData.loading"
-                    style="width: 100%"
-                    row-key="path"
-                    :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
+                :data="state.tableData.data"
+                v-loading="state.tableData.loading"
+                style="width: 100%"
+                row-key="path"
+                :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
             >
                 <el-table-column label="菜单名称" show-overflow-tooltip>
                     <template #default="scope">
@@ -53,7 +53,8 @@
                 </el-table-column>
                 <el-table-column label="操作" show-overflow-tooltip width="140">
                     <template #default="scope">
-                        <el-button size="small" text type="primary" @click="onOpenAddMenu('add')">新增</el-button>
+                        <el-button size="small" text type="primary" @click="onOpenAddMenu('add', scope.row)">新增
+                        </el-button>
                         <el-button size="small" text type="primary" @click="onOpenEditMenu('edit', scope.row)">修改
                         </el-button>
                         <el-button size="small" text type="primary" @click="onTabelRowDel(scope.row)">删除</el-button>
@@ -101,8 +102,8 @@ const doSearch = () => {
     getTableData();
 };
 // 打开新增菜单弹窗
-const onOpenAddMenu = (type: string) => {
-    menuDialogRef.value.openDialog(type);
+const onOpenAddMenu = (type: string, row?) => {
+    menuDialogRef.value.openDialog(type, row);
 };
 // 打开编辑菜单弹窗
 const onOpenEditMenu = (type: string, row: RouteRecordRaw) => {

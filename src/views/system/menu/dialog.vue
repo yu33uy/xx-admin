@@ -1,7 +1,8 @@
 <template>
     <div class="system-menu-dialog-container">
         <el-dialog :title="state.dialog.title" v-model="state.dialog.isShowDialog" width="769px">
-            <el-form ref="menuDialogFormRef" :model="state.ruleForm" size="default" label-width="80px">
+            <el-form ref="menuDialogFormRef" :model="state.ruleForm" :rules="state.rules" size="default"
+                     label-width="80px">
                 <el-row :gutter="35">
                     <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="mb20">
                         <el-form-item label="上级菜单" prop="parentId">
@@ -200,6 +201,13 @@ const state = reactive({
         type: '',
         title: '',
         submitTxt: '',
+    },
+    rules: {
+        parentId: [{required: true, message: '请选择上级菜单', trigger: 'change'}],
+        name: [{required: true, message: '请输入路由名称', trigger: 'blur'}],
+        component: [{required: true, message: '请输入组件路径', trigger: 'blur'}],
+        path: [{required: true, message: '请输入路由路径', trigger: 'blur'}],
+        title: [{required: true, message: '请输入菜单名称', trigger: 'blur'}],
     }
 });
 
@@ -231,6 +239,9 @@ const openDialog = (type: string, row?: any) => {
         // 清空表单，此项需加表单验证才能使用
         nextTick(() => {
             menuDialogFormRef.value.resetFields();
+            if (row) {
+                state.ruleForm.parentId = row.id;
+            }
         });
     }
     state.dialog.type = type;
@@ -250,18 +261,23 @@ const onCancel = () => {
 };
 // 提交
 const onSubmit = async () => {
-    if (state.dialog.type === 'edit')
-        await menuApi.editMenu(state.ruleForm).then(() => {
-            // location.reload();
-        })
-    else if (state.dialog.type === 'add')
-        await menuApi.addMenu(state.ruleForm).then(() => {
-            // location.reload();
-        });
+    menuDialogFormRef.value.validate(async (valid: boolean) => {
+        if (!valid) return;
 
-    emit('refresh');
-    closeDialog(); // 关闭弹窗
-    await setBackEndControlRefreshRoutes() // 刷新菜单，未进行后端接口测试
+        if (state.dialog.type === 'edit')
+            await menuApi.editMenu(state.ruleForm).then(() => {
+                // location.reload();
+            })
+        else if (state.dialog.type === 'add')
+            await menuApi.addMenu(state.ruleForm).then(() => {
+                // location.reload();
+            });
+
+        emit('refresh');
+        closeDialog(); // 关闭弹窗
+        await setBackEndControlRefreshRoutes() // 刷新菜单，未进行后端接口测试
+    });
+
 };
 // 页面加载时
 onMounted(() => {
