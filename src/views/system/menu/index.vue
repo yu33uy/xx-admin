@@ -2,14 +2,6 @@
     <div class="system-menu-container layout-pd">
         <el-card shadow="hover">
             <div class="system-menu-search mb15">
-                <el-input size="default" v-model="state.tableData.param.search" placeholder="请输入菜单名称"
-                          style="max-width: 180px"></el-input>
-                <el-button size="default" type="primary" class="ml10" @click="doSearch">
-                    <el-icon>
-                        <ele-Search/>
-                    </el-icon>
-                    查询
-                </el-button>
                 <el-button size="default" type="success" class="ml10" @click="onOpenAddMenu('add')">
                     <el-icon>
                         <ele-FolderAdd/>
@@ -84,23 +76,17 @@ const state = reactive({
     tableData: {
         data: [] as any,
         loading: true,
-        param: {
-            search: '',
-        }
     },
 });
 
 // 获取路由数据，真实请从接口获取
 const getTableData = async () => {
     state.tableData.loading = true;
-    state.tableData.data = await menuApi.getMenuTree(state.tableData.param).finally(() => {
+    state.tableData.data = await menuApi.getMenuTree().finally(() => {
         state.tableData.loading = false;
     });
 };
 
-const doSearch = () => {
-    getTableData();
-};
 // 打开新增菜单弹窗
 const onOpenAddMenu = (type: string, row?) => {
     menuDialogRef.value.openDialog(type, row);
